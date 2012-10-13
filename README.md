@@ -2,7 +2,10 @@ Remote Storage Provider running on Google App Engine
 
 ### Usage
 
-Is coming soon...
+If your gmail address is for example **username@gmail.com**
+then you can now use **username@remote-storage.appspot.com** as your remote storage address.
+
+Have a look at https://remote-storage.appspot.com !
 
 
 ### Development
