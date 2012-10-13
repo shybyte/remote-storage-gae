@@ -8,20 +8,23 @@ import com.googlecode.objectify.annotation.Index;
 
 @Entity
 public class Resource {
-    private static final String PATH_SEP = "/";
-	@Id String path;
-    @Index String dir;
-    String contentType;
-    String content;
-    long timestamp; // last modified
-    
-    public Resource() {
+	private static final String PATH_SEP = "/";
+	@Id
+	String path;
+	@Index
+	String dir;
+	String contentType;
+	String content;
+	long timestamp; // last modified
+
+	public Resource() {
+		// for Objectify
 	}
-    
-	private Resource(String path,String content,String contentType,String parentDir) {
+
+	private Resource(String path, String content, String contentType) {
 		this.path = path;
 		this.contentType = contentType;
-		this.dir =  parentDir;
+		this.dir = getParentDirectory(path);
 		this.content = content;
 		this.timestamp = Calendar.getInstance().getTime().getTime();
 	}
@@ -41,32 +44,38 @@ public class Resource {
 	public String getContent() {
 		return content;
 	}
-	
+
 	public long getTimestamp() {
 		return timestamp;
 	}
-	
+
 	public String getName() {
-		int searchStart = isDirectory() ? path.length()-2 : path.length();
-		return path.substring(path.lastIndexOf(PATH_SEP,searchStart)+1);
+		int searchStart = isDirectory() ? path.length() - 2 : path.length();
+		return path.substring(path.lastIndexOf(PATH_SEP, searchStart) + 1);
 	}
-	
-	public static Resource resource(String path,String content,String contentType) {
+
+	public static Resource resource(String path, String content,
+			String contentType) {
 		assert !isDirectoryPath(path);
-		return new Resource(path, content, contentType,path.substring(0,path.lastIndexOf('/')+1));
+		return new Resource(path, content, contentType);
 	}
-	
+
 	public static Resource directory(String path) {
 		assert isDirectoryPath(path);
-		return new Resource(path, null, null,path.substring(0,path.lastIndexOf(PATH_SEP,path.length()-2)+1));
+		return new Resource(path, null, null);
 	}
-	
+
 	public boolean isDirectory() {
 		return isDirectoryPath(path);
 	}
-	
+
 	public static boolean isDirectoryPath(String path) {
 		return path.endsWith(PATH_SEP);
 	}
-	
+
+	public static String getParentDirectory(String path) {
+		return isDirectoryPath(path) ? path.substring(0,
+				path.lastIndexOf(PATH_SEP, path.length() - 2) + 1) : path
+				.substring(0, path.lastIndexOf('/') + 1);
+	}
 }

@@ -20,7 +20,7 @@ object Dao {
     var currentPath = path;
     while (currentPath.length()>1) {
       ofy.save().entity(directory(currentPath))
-      currentPath = currentPath.substring(0,currentPath.lastIndexOf("/",currentPath.length()-2)+1)
+      currentPath = getParentDirectory(currentPath)
     }
   }
 
