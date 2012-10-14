@@ -2,22 +2,89 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Remote Storage Provider running on Google App Engine</title>
+    <title>Remote Storage for your Google Account</title>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
+    <script type="text/javascript" src="libs/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="libs/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="shortcut icon" href="images/remotestorage-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="remotestorage-touch.png">
 </head>
 
 <body>
-<h1>Remote Storage Provider running on Google App Engine</h1>
-
-<p>If your gmail address is for example <strong>username@gmail.com</strong>
-    then you can now use <strong>username@remote-storage.appspot.com</strong> as remote storage address.</p>
-
-Please try one of these apps as example:
-<ul>
-    <li>
-        <a href="http://shybyte.github.com/unhosted-time-tracker/">Unhosted Time Tracker</a>
-    </li>
-</ul>
 
 
+<div class="page">
+    <h1>Remote Storage for your Google Account <span class="alpha">alpha</span></h1>
+
+    <p>
+        This is a <a href="http://remotestorage.io">remotestorage server</a>, that you can use
+        for remoteStorage 0.7 web apps.
+    </p>
+
+    <p>If your gmail address is for example <strong>username@gmail.com</strong>
+        then you can now use <strong>username@remote-storage.appspot.com</strong> as
+        remote storage address to login in remoteStorage web apps.</p>
+
+    Please try one of these apps as example:
+    <ul>
+        <li>
+            <a href="http://shybyte.github.com/unhosted-time-tracker/">Unhosted Time Tracker</a>
+        </li>
+    </ul>
+
+    <h2>FAQ</h2>
+
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#isDataSafe">
+                    Will my data be safe?
+                </a>
+            </div>
+            <div id="isDataSafe" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <strong>No, it won't yet.</strong>
+                    For now this service is meant as an option for developers who don't
+                    have their own remotestorage server or want to test their apps against multiple storage providers.
+                    Don't be suprised if your data disappear. In the near future this service will become
+                    a user friendly, effortless and reliable remote storage provider.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#code">
+                    Where is the code?
+                </a>
+            </div>
+            <div id="code" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    Find it on <a href="https://github.com/shybyte/remote-storage-gae/">github</a>.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#issueTracker">
+                    Where can I report bugs or propose new features?
+                </a>
+            </div>
+            <div id="issueTracker" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    If this service gives you any trouble or you have great ideas for improvement, please <a
+                        href="https://github.com/shybyte/remote-storage-gae/issues">open
+                    an issue</a>.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
 </body>
 </html>

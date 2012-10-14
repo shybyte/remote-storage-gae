@@ -1,0 +1,29 @@
+body {
+    font-size: 14px;
+}
+
+.page {
+    margin: 1em auto 0;
+    max-width: 40em;
+}
+
+h1 {
+    font-size: 1.5em;
+    line-height: 1em;
+    margin: 1em 0;
+}
+
+.alpha {
+    color: #5f0;
+}
+
+h2 {
+    font-size: 1.2em;
+    margin-top: 2em;;
+    line-height: 1em;
+}
+
+ul {
+  margin-top: 0.5em;
+}
+

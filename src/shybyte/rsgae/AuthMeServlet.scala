@@ -31,11 +31,15 @@ class AuthMeServlet extends HttpServlet {
     }
 
   }
-  
-  def getCompleteURI(req: HttpServletRequest) : String = {
-	  val queryTail = if (req.getQueryString() == null) "" else "?"+req.getQueryString()
-	  return req.getRequestURI() + queryTail
-  } 
+
+  def getCompleteURI(req: HttpServletRequest): String = {
+    val queryTail = if (req.getQueryString() == null) "" else "?" + req.getQueryString()
+    return req.getRequestURI() + queryTail
+  }
+
+  def humanizeScope(scope: String) = {
+    scope.replace(":rw", " (Read and Write)").replace(":r", " (Read)")
+  }
 
   private def showConfirmationPage(req: javax.servlet.http.HttpServletRequest, resp: javax.servlet.http.HttpServletResponse, username: java.lang.String): Unit = {
     val scopes = req.getParameter("scope").split(" ")
@@ -45,39 +49,44 @@ class AuthMeServlet extends HttpServlet {
     AuthTokenDao.save(authToken)
 
     var url = req.getParameter("redirect_uri") + "#access_token=" + authToken.getId()
-    val page =
-      <html>
-        <head>
-          <title>Allow Remote Storage Access</title>
-        </head>
-        <body>
-          <h1>Allow Remote Storage Access?</h1>
-          The web app <strong>{ clientID }</strong>
-          requested the following rights:
-          <ul>{ for (scope <- scopes) yield <li>{ scope }</li> }</ul>
-          <p><a href={ url }>Allow</a></p>
-        </body>
-      </html>;
-    resp.getWriter().println(page)
+
+    val pageContent =
+      <div>
+        A web app from server&nbsp;<strong>{ clientID }</strong>
+        requested the following rights:
+        <ul>{ for (scope <- scopes) yield <li>{ humanizeScope(scope) }</li> }</ul>
+        <p><a href={ url } class="btn btn-primary">Allow</a></p>
+      </div>
+
+    val jspPage = getServletContext().getRequestDispatcher("/WEB-INF/jsp/allow.jsp")
+    req.setAttribute("title", "Allow Remote Storage Access?");
+    req.setAttribute("pageContent", pageContent.toString());
+    jspPage.forward(req, resp);
   }
 
   private def showWrongUsernameWarningPage(req: javax.servlet.http.HttpServletRequest,
     resp: javax.servlet.http.HttpServletResponse,
     username: String, userService: UserService, loggedInUserName: String): Unit = {
-    val page =
-      <html>
-        <head>
-          <title>Wrong Username</title>
-        </head>
-        <body>
-          <h1>Wrong Username?</h1>
-          Your remotestorage user name <strong>{ username }</strong>
-          does not match your google id <strong>{ loggedInUserName}</strong>
-          !
-          <p>Please try again:<a href={ userService.createLogoutURL(userService.createLoginURL(getCompleteURI(req))) }>Relogin</a></p>
-        </body>
-      </html>;
-    resp.getWriter().println(page)
+    val orignalRedirectUrl = req.getParameter("redirect_uri")
+    val potentielRemoteStorageUsreAddress = loggedInUserName+"@"+req.getServerName()
+    val reloginWithDifferentGoogeAccountUrl = userService.createLogoutURL(userService.createLoginURL(getCompleteURI(req)))
+    
+    val pageContent =
+      <div>
+        Your remotestorage user&nbsp;name&nbsp;<strong>{ username }</strong>
+        does not match your google&nbsp;id&nbsp;<strong>{ loggedInUserName }</strong>
+        !<br/>
+        Please try:
+        <ul>
+          <li><a href={ reloginWithDifferentGoogeAccountUrl }>Relogin with google&nbsp;account&nbsp;<strong>{ username }</strong></a></li>
+          <li><a href={ orignalRedirectUrl }>Relogin with remote&nbsp;storage&nbsp;address&nbsp;<strong>{ potentielRemoteStorageUsreAddress }</strong></a></li>
+        </ul>
+      </div>
+
+    val jspPage = getServletContext().getRequestDispatcher("/WEB-INF/jsp/allow.jsp")
+    req.setAttribute("title", "Wrong User Name?");
+    req.setAttribute("pageContent", pageContent.toString());
+    jspPage.forward(req, resp);
   }
 
 }
