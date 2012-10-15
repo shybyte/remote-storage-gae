@@ -9,6 +9,7 @@ import shybyte.rsgae.dao.AuthTokenDao
 import com.google.appengine.api.users.UserServiceFactory
 import com.google.appengine.api.users.User
 import com.google.appengine.api.users.UserService
+import shybyte.rsgae.model.Scope
 
 @SuppressWarnings(Array("serial"))
 class AuthMeServlet extends HttpServlet {
@@ -37,8 +38,14 @@ class AuthMeServlet extends HttpServlet {
     return req.getRequestURI() + queryTail
   }
 
-  def humanizeScope(scope: String) = {
-    scope.replace(":rw", " (Read and Write)").replace(":r", " (Read)")
+  def humanizeScope(scopeString: String):String = {
+    val scope = Scope(scopeString)
+    val optionLabel = scope.options match {
+      case "rw" => "(Read and Write)"
+      case "r" => "(Read)"
+    }
+    val pathLabel = if (scope.path == "") "All Remote Storage Data" else scope.path
+    return pathLabel+" "+optionLabel
   }
 
   private def showConfirmationPage(req: javax.servlet.http.HttpServletRequest, resp: javax.servlet.http.HttpServletResponse, username: java.lang.String): Unit = {
