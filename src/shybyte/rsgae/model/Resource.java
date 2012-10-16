@@ -1,14 +1,19 @@
 package shybyte.rsgae.model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 @Entity
-public class Resource {
+@Cache
+public class Resource implements Serializable{
+	private static final long serialVersionUID = 1016697286429182488L;
 	private static final String PATH_SEP = "/";
+	
 	@Id
 	String path;
 	@Index

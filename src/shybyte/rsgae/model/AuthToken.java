@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 @Entity
+@Cache
 public class AuthToken {
 	public static Pattern isValidPublicPath = Pattern
 			.compile("^/[^/]+/public.*[^/]$");

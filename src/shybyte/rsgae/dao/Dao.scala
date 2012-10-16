@@ -7,19 +7,24 @@ import com.googlecode.objectify.ObjectifyService.ofy
 import shybyte.rsgae.model.Resource
 import shybyte.rsgae.model.Resource._
 import com.googlecode.objectify.ObjectifyService
+import net.sf.jsr107cache.CacheManager
+import java.util.Collections
 
 object Dao {
   ObjectifyService.register(classOf[Resource])
+  val  cacheFactory = CacheManager.getInstance().getCacheFactory();
+  val  cache = cacheFactory.createCache(Collections.emptyMap());
 
   def save(entity: Resource) {
     ofy.save().entity(entity)
-    ensureParentDirectories(entity.getDir());
+    ensureUpdatedParentDirectories(entity.getDir());
   }
   
-  def ensureParentDirectories(path:String) {
+  def ensureUpdatedParentDirectories(path:String) {
     var currentPath = path;
     while (currentPath.length()>1) {
       ofy.save().entity(directory(currentPath))
+      cache.remove(dirListingKey(currentPath))
       currentPath = getParentDirectory(currentPath)
     }
   }
@@ -27,12 +32,24 @@ object Dao {
   def getResource(id: String) = ofy().load().`type`(classOf[Resource]).id(id).get()
   
   def listDirectory(directory: String) :Seq[(String,Long)] = {
+    val cachedDirListing = cache.get(dirListingKey(directory)).asInstanceOf[Seq[(String,Long)]]
+    if (cachedDirListing!=null) {
+      return cachedDirListing
+    }
     val resources :Seq[Resource] = ofy().load().`type`(classOf[Resource]).filter("dir",directory).list()
-    return resources.map(r => (r.getName(),r.getTimestamp()))
+    val timeStampByPath = resources.filter(_ != null).map(r => (r.getName(),r.getTimestamp()))
+    cache.put(dirListingKey(directory),timeStampByPath)
+    return timeStampByPath
   } 
+  
+  def dirListingKey(path:String) = "dir:"+path
 
   def deleteResource(id: String) {
-    ofy().delete().`type`(classOf[Resource]).id(id)
+    val resource = getResource(id)
+    if (resource != null) {
+    	ofy().delete().`type`(classOf[Resource]).id(id)
+    	ensureUpdatedParentDirectories(resource.getDir())
+    }
   }
 
 }
